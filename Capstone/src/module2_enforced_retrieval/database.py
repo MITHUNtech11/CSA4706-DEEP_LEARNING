@@ -1,21 +1,35 @@
 """
 Relational Database Repository for Patient Records, Referrals, and Care Teams.
-Enforces pre-retrieval SQL filtering based on role scope and referral validity.
+Enforces pre-retrieval SQL filtering and production-grade connection handling with SQLite WAL mode.
 """
 
 import sqlite3
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
-from src.config import DB_PATH
+from src.config import DB_PATH, SQLITE_WAL_MODE
 
 
 class HospitalRepository:
     def __init__(self, db_path=DB_PATH):
         self.db_path = db_path
+        self._init_pragmas()
+
+    def _init_pragmas(self):
+        """Initializes database performance and concurrency pragmas on startup."""
+        conn = sqlite3.connect(self.db_path, timeout=15.0)
+        cur = conn.cursor()
+        if SQLITE_WAL_MODE:
+            cur.execute("PRAGMA journal_mode=WAL;")
+        cur.execute("PRAGMA synchronous=NORMAL;")
+        cur.execute("PRAGMA foreign_keys=ON;")
+        conn.commit()
+        conn.close()
 
     def _get_connection(self):
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path, timeout=15.0)
         conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("PRAGMA foreign_keys=ON;")
         return conn
 
     def get_patient_by_id(self, patient_id: str) -> Optional[Dict[str, Any]]:
@@ -75,7 +89,7 @@ class HospitalRepository:
         if allowed_patient_ids is not None:
             if not allowed_patient_ids:
                 conn.close()
-                return []  # Empty allowed scope -> return nothing
+                return []
             placeholders = ",".join(["?"] * len(allowed_patient_ids))
             query += f" AND patient_id IN ({placeholders})"
             params.extend(allowed_patient_ids)

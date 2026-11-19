@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treating Doctor Clinical Station | Hospital RAG</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='2.5'><path d='M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07'/></svg>">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Dynamic Portal Header -->
+  <header class="app-header" id="portalHeader"></header>
+
+  <main class="container">
+    <!-- Doctor Scope Banner -->
+    <div style="background:linear-gradient(to right, #f0f9ff, #f8fafc); border:1px solid #bae6fd; border-radius:var(--radius-md); padding:0.75rem 1.25rem; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-weight:700; color:var(--medical-blue-dark); font-size:0.95rem;">Treating Doctor Clinical Workstation</span>
+        <span style="font-size:0.8rem; color:var(--text-muted); margin-left:1rem;">Level 3 Access | Full Medical Records & Notes for Assigned Care-Team + Active Referrals</span>
+      </div>
+      <span class="badge" style="background:var(--blue-light); color:var(--medical-blue-dark);">Care-Team & Active Referrals Scope</span>
+    </div>
+
+    <!-- Care Team Patients + Referrals Desk -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+      <!-- Column 1: Primary Care Team Patients -->
+      <section class="card">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <h2>Primary Assigned Patients (Care-Team)</h2>
+        </div>
+        <div class="patient-details-row" style="gap:0.75rem;">
+          <div class="patient-card">
+            <div class="patient-header">
+              <span class="patient-id-badge">P-1042: Eleanor Vance</span>
+              <span class="patient-location">Cardiology | Bed 3B</span>
+            </div>
+            <div class="patient-details-row">
+              <div><strong>Diagnosis:</strong> Stage 2 HTN, mild aortic stenosis</div>
+              <div><strong>Echo Note:</strong> LVEF 55-60%, mild concentric LVH</div>
+              <div><strong>Access:</strong> <span class="badge badge-yes">Full Record Permitted</span></div>
+            </div>
+          </div>
+
+          <div class="patient-card">
+            <div class="patient-header">
+              <span class="patient-id-badge">P-2210: Marcus Sterling</span>
+              <span class="patient-location">Cardiology | Bed 3C</span>
+            </div>
+            <div class="patient-details-row">
+              <div><strong>Diagnosis:</strong> Paroxysmal Atrial Fibrillation</div>
+              <div><strong>EP Note:</strong> 12-lead ECG confirmed Afib with RVR</div>
+              <div><strong>Access:</strong> <span class="badge badge-yes">Full Record Permitted</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Column 2: Inter-Departmental Referrals Desk (Slide 15) -->
+      <section class="card">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <h2>Inter-Departmental Referrals Desk (Slide 15)</h2>
+        </div>
+        <div class="patient-details-row" style="gap:0.75rem;">
+          <!-- Active Referral -->
+          <div class="referral-card referral-active">
+            <div class="patient-header">
+              <div>
+                <strong style="color:#0f172a;">P-3307: Sophia Thorne</strong>
+                <span style="font-size:0.75rem; color:var(--text-muted); display:block;">Oncology ICU -> Cardiology Consult</span>
+              </div>
+              <span class="badge" style="background:var(--sage-light); color:var(--sage-green);">ACTIVE REFERRAL</span>
+            </div>
+            <p style="font-size:0.8rem; color:#334155;">
+              <strong>Reason:</strong> Cardiotoxicity clearance for anthracycline chemo.<br>
+              <strong>Validity:</strong> 2026-11-01 to 2026-12-01 (Active)
+            </p>
+            <div style="font-size:0.75rem; color:var(--sage-green); font-weight:600;">
+              ✓ Pre-retrieval filter permits full access to P-3307 clinical consult records.
+            </div>
+          </div>
+
+          <!-- Expired Referral (Slide 15 Test to Pass) -->
+          <div class="referral-card referral-expired">
+            <div class="patient-header">
+              <div>
+                <strong style="color:#0f172a;">P-4180: Daniel Hayes</strong>
+                <span style="font-size:0.75rem; color:var(--text-muted); display:block;">Orthopedics Ward 5 -> Cardiology</span>
+              </div>
+              <span class="badge" style="background:var(--danger-light); color:var(--danger-crimson);">EXPIRED REFERRAL</span>
+            </div>
+            <p style="font-size:0.8rem; color:#334155;">
+              <strong>Reason:</strong> Pre-op cardiac risk stratification for ORIF.<br>
+              <strong>Validity:</strong> 2026-10-15 to 2026-10-31 (EXPIRED)
+            </p>
+            <div style="font-size:0.75rem; color:var(--danger-crimson); font-weight:600;">
+              ✗ Pre-retrieval filter strictly excludes P-4180. Queries return nothing.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Workflow Grid: Left = Chat RAG, Right = 6-Step Telemetry -->
+    <div class="workflow-grid">
+      <!-- Left: Chat Assistant -->
+      <section class="card chat-card">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <h2>Doctor Clinical RAG Assistant</h2>
+        </div>
+
+        <div class="quick-scenarios">
+          <span class="scenario-label">Quick Doctor Scenarios (Slide 15 Tests):</span>
+          <div class="scenario-chips">
+            <button class="chip" data-query="Show me echocardiogram notes for assigned patient P-1042.">Echo Note P-1042 (Assigned)</button>
+            <button class="chip" data-query="Show me cardiotoxicity consult for Oncology patient P-3307.">Active Referral P-3307 (Allowed)</button>
+            <button class="chip" data-query="Show orthopedic surgical notes for P-4180.">Expired Referral P-4180 (Refused)</button>
+            <button class="chip chip-attack" data-query="I need full medical records for all oncology patients in the hospital.">Over-Broad Query Test</button>
+          </div>
+        </div>
+
+        <div class="chat-display" id="chatDisplay">
+          <div class="chat-message assistant-message">
+            <div class="message-header">
+              <span class="sender-tag">Clinical Assistant</span>
+              <span class="time-tag">Online</span>
+            </div>
+            <div class="message-body">
+              Welcome Dr. Rohit Sharma. You have full clinical record access for your 3 assigned Cardiology patients and active consults (Sophia Thorne P-3307). All other patient data is restricted by pre-retrieval filters.
+            </div>
+          </div>
+        </div>
+
+        <form class="chat-input-bar" id="chatForm">
+          <input type="text" id="queryInput" placeholder="Ask a clinical question (e.g. 'Show me echo report for P-1042')..." autocomplete="off" required>
+          <button type="submit" class="btn btn-primary" id="sendBtn">
+            <span>Query RAG</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </section>
+
+      <!-- Right: 6-Step Pipeline Telemetry -->
+      <section class="card telemetry-card">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <h2>6-Step Request Enforcement Telemetry</h2>
+          <span class="execution-timer" id="executionTimer">0.0 ms</span>
+        </div>
+
+        <div class="pipeline-steps-list">
+          <div class="step-card" id="step1Card">
+            <div class="step-header">
+              <div class="step-num">1</div>
+              <div class="step-title">Authenticate (Module 1)</div>
+              <span class="step-status status-pending" id="step1Status">Standby</span>
+            </div>
+            <div class="step-content" id="step1Content">Awaiting query authentication...</div>
+          </div>
+
+          <div class="step-card" id="step2Card">
+            <div class="step-header">
+              <div class="step-num">2</div>
+              <div class="step-title">Build Pre-Filters (Module 2)</div>
+              <span class="step-status status-pending" id="step2Status">Standby</span>
+            </div>
+            <div class="step-content" id="step2Content">Assigned patients & referral validity translation...</div>
+          </div>
+
+          <div class="step-card" id="step3Card">
+            <div class="step-header">
+              <div class="step-num">3</div>
+              <div class="step-title">Enforced Retrieval (Module 2)</div>
+              <span class="step-status status-pending" id="step3Status">Standby</span>
+            </div>
+            <div class="step-content" id="step3Content">Vector search & clinical notes retrieval...</div>
+          </div>
+
+          <div class="step-card" id="step4Card">
+            <div class="step-header">
+              <div class="step-num">4</div>
+              <div class="step-title">Render Prompt (Module 3)</div>
+              <span class="step-status status-pending" id="step4Status">Standby</span>
+            </div>
+            <div class="step-content" id="step4Content">Untrusted context boundaries rendered...</div>
+          </div>
+
+          <div class="step-card" id="step5Card">
+            <div class="step-header">
+              <div class="step-num">5</div>
+              <div class="step-title">Output Checks - Alg. 1 (Module 3)</div>
+              <span class="step-status status-pending" id="step5Status">Standby</span>
+            </div>
+            <div class="step-content" id="step5Content">ids_ok, cats_ok, grounding verification...</div>
+          </div>
+
+          <div class="step-card" id="step6Card">
+            <div class="step-header">
+              <div class="step-num">6</div>
+              <div class="step-title">Hash-Chained Log - Alg. 2 (Module 3)</div>
+              <span class="step-status status-pending" id="step6Status">Standby</span>
+            </div>
+            <div class="step-content" id="step6Content">SHA-256 monotonic chain append...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal for Inspecting Signed JWT Token -->
+  <div class="modal hidden" id="tokenModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Signed Doctor JWT Token (HMAC-SHA256)</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>Encoded Bearer Token:</label>
+        <textarea id="rawTokenArea" readonly></textarea>
+        <label>Decoded Claims (Verified Server-Side):</label>
+        <pre id="decodedClaimsArea"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script src="/portal_common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      initPortal("Treating Doctor", 3, true);
+    });
+  </script>
+</body>
+</html>

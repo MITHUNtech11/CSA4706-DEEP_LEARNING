@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  hospital-rag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hospital-rag-rbac-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - JWT_SECRET=production_enterprise_hospital_secret_key_998877_change_me
+      - SQLITE_WAL_MODE=true
+      - LOG_LEVEL=INFO
+      - LLM_PROVIDER=mock
+    volumes:
+      # Persistent named volumes for clinical DB and audit chain logs
+      - hospital_data:/app/data
+      - hospital_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/live')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  hospital_data:
+    driver: local
+  hospital_logs:
+    driver: local

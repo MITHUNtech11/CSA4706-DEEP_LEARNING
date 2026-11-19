@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Admin Security Console | Hospital RAG</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='2.5'><path d='M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07'/></svg>">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Dynamic Portal Header -->
+  <header class="app-header" id="portalHeader"></header>
+
+  <main class="container">
+    <!-- Separation of Duties Hard Banner (Slide 9 & 14) -->
+    <div class="duty-separation-banner">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <h3>STRICT SEPARATION OF DUTIES ENFORCED (SLIDE 9 & 14)</h3>
+        <p>System Administrators manage system configurations, policy versions, and audit logs only. <strong>All patient clinical notes, diagnoses, and personal identifier queries are strictly prohibited (Fail-Closed 403 Refusal).</strong></p>
+      </div>
+    </div>
+
+    <!-- Administrative Tabs: Tab 1 = Audit & Tamper Engine, Tab 2 = Policy Governance, Tab 3 = Data Query Sandbox -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="display:flex; background-color:#f1f5f9; border-bottom:1px solid var(--border-color);">
+        <button class="tab-btn active" onclick="switchAdminTab('tabAudit', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Tamper-Evident Audit Log (Algorithm 2)
+        </button>
+        <button class="tab-btn" onclick="switchAdminTab('tabPolicy', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          Policy Matrix & Dual-Approver Governance
+        </button>
+        <button class="tab-btn" onclick="switchAdminTab('tabSandbox', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Clinical Query Refusal Sandbox (Slide 14 Test)
+        </button>
+      </div>
+
+      <!-- Tab 1: Audit Log & Cryptographic Verification -->
+      <div id="tabAudit" class="tab-pane active" style="padding:1.25rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <div style="display:flex; gap:1.25rem; font-size:0.85rem; color:var(--text-muted);">
+            <span>Total Records: <strong id="totalAuditCount">0</strong></span>
+            <span>Integrity: <strong class="text-success" id="chainIntegrityStatus">Verified</strong></span>
+          </div>
+          <div style="display:flex; gap:0.6rem;">
+            <button class="btn btn-outline" onclick="loadAuditLogs()">Refresh Log</button>
+            <button class="btn btn-primary" onclick="verifyChain()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Verify Hash Chain
+            </button>
+            <button class="btn btn-danger" onclick="simulateTamper()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Simulate Secret Tamper
+            </button>
+          </div>
+        </div>
+
+        <div id="tamperAlertBanner" class="tamper-alert-box hidden"></div>
+
+        <div style="overflow-x:auto;">
+          <table class="data-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Index</th>
+                <th>Timestamp</th>
+                <th>User ID</th>
+                <th>Role</th>
+                <th>Outcome</th>
+                <th>Scope Applied</th>
+                <th>Current Hash (h_n)</th>
+                <th>Previous Hash (h_prev)</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Policy Matrix & Dual Approver Governance -->
+      <div id="tabPolicy" class="tab-pane hidden" style="padding:1.25rem;">
+        <div style="margin-bottom:1rem;">
+          <h3 style="font-size:1.1rem; color:#0f172a;">Active Permission Matrix (<span id="policyVersionText">v1.0</span>)</h3>
+          <p style="font-size:0.825rem; color:var(--text-muted);">Stored as versioned policy data. Changes require dual-approver sign-off and are logged.</p>
+        </div>
+
+        <div class="dual-approver-box">
+          <div class="approver-info">
+            <h4>Draft Policy v1.1 Pending Second Approval</h4>
+            <p>Proposal: Add <em>Clinical Researcher</em> role with de-identified aggregate access. Requires sign-off from two independent administrators.</p>
+            <div class="approver-signatures">
+              <span class="sig-badge signed">✓ Approver 1: admin_chief_officer_01</span>
+              <span class="sig-badge pending" id="approver2Status">⏳ Approver 2: Pending Sign-Off</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="approveDraftPolicy()">Sign as Compliance Director (Approver 2)</button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Clinical Query Refusal Sandbox -->
+      <div id="tabSandbox" class="tab-pane hidden" style="padding:1.25rem;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+          <section class="card chat-card">
+            <div class="section-title">
+              <h2>Admin Clinical Sandbox Test</h2>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem;">
+              Slide 14 Test: The system administrator is refused all data queries. Test below:
+            </p>
+            <div class="quick-scenarios">
+              <div class="scenario-chips">
+                <button class="chip" data-query="List all patient names, diagnoses, and medical records.">Query All Records (Admin)</button>
+                <button class="chip" data-query="Show me Eleanor Vance P-1042's diagnosis.">Query Specific Patient (Admin)</button>
+              </div>
+            </div>
+
+            <div class="chat-display" id="chatDisplay">
+              <div class="chat-message assistant-message">
+                <div class="message-header"><span class="sender-tag">Security Gateway</span></div>
+                <div class="message-body">Terminal active under System Administrator (SYS_999). Clinical queries are prohibited.</div>
+              </div>
+            </div>
+
+            <form class="chat-input-bar" id="chatForm">
+              <input type="text" id="queryInput" placeholder="Try asking for any patient record..." autocomplete="off" required>
+              <button type="submit" class="btn btn-primary" id="sendBtn"><span>Execute Query</span></button>
+            </form>
+          </section>
+
+          <section class="card telemetry-card">
+            <div class="section-title">
+              <h2>Enforcement Telemetry</h2>
+              <span class="execution-timer" id="executionTimer">0.0 ms</span>
+            </div>
+            <div class="pipeline-steps-list">
+              <div class="step-card" id="step1Card"><div class="step-header"><div class="step-num">1</div><div class="step-title">Authenticate (Module 1)</div><span class="step-status status-pending" id="step1Status">Standby</span></div><div class="step-content" id="step1Content">Awaiting query...</div></div>
+              <div class="step-card" id="step2Card"><div class="step-header"><div class="step-num">2</div><div class="step-title">Build Filters (Module 2)</div><span class="step-status status-pending" id="step2Status">Standby</span></div><div class="step-content" id="step2Content">Standby...</div></div>
+              <div class="step-card" id="step3Card"><div class="step-header"><div class="step-num">3</div><div class="step-title">Retrieve (Module 2)</div><span class="step-status status-pending" id="step3Status">Standby</span></div><div class="step-content" id="step3Content">Standby...</div></div>
+              <div class="step-card" id="step4Card"><div class="step-header"><div class="step-num">4</div><div class="step-title">Render Prompt (Module 3)</div><span class="step-status status-pending" id="step4Status">Standby</span></div><div class="step-content" id="step4Content">Standby...</div></div>
+              <div class="step-card" id="step5Card"><div class="step-header"><div class="step-num">5</div><div class="step-title">Output Checks (Module 3)</div><span class="step-status status-pending" id="step5Status">Standby</span></div><div class="step-content" id="step5Content">Standby...</div></div>
+              <div class="step-card" id="step6Card"><div class="step-header"><div class="step-num">6</div><div class="step-title">Hash Log (Module 3)</div><span class="step-status status-pending" id="step6Status">Standby</span></div><div class="step-content" id="step6Content">Standby...</div></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal for Inspecting Signed JWT Token -->
+  <div class="modal hidden" id="tokenModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Signed Admin JWT Token (HMAC-SHA256)</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>Encoded Bearer Token:</label>
+        <textarea id="rawTokenArea" readonly></textarea>
+        <label>Decoded Claims (Verified Server-Side):</label>
+        <pre id="decodedClaimsArea"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script src="/portal_common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initPortal("System Administrator", 0, false);
+      await loadAuditLogs();
+    });
+
+    function switchAdminTab(tabId, btn) {
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(tabId).classList.remove("hidden");
+      btn.classList.add("active");
+    }
+
+    async function loadAuditLogs() {
+      try {
+        const res = await fetch("/api/audit/logs");
+        const data = await res.json();
+        const entries = data.entries || [];
+        document.getElementById("totalAuditCount").textContent = entries.length;
+
+        const tbody = document.getElementById("auditTableBody");
+        tbody.innerHTML = "";
+
+        entries.slice().reverse().forEach(item => {
+          const rec = item.entry || {};
+          const row = document.createElement("tr");
+          const isAllowed = rec.outcome === "ALLOWED";
+          const outcomeBadge = isAllowed 
+            ? `<span class="badge" style="background:var(--sage-light); color:var(--sage-green);">ALLOWED</span>` 
+            : `<span class="badge" style="background:var(--danger-light); color:var(--danger-crimson);">BLOCKED</span>`;
+
+          row.innerHTML = `
+            <td>#${rec.entry_index || "-"}</td>
+            <td>${rec.timestamp ? new Date(rec.timestamp).toLocaleTimeString() : "-"}</td>
+            <td><strong>${rec.user_id || "-"}</strong></td>
+            <td>${rec.role || "-"}</td>
+            <td>${outcomeBadge}</td>
+            <td><code>${rec.filters_applied ? rec.filters_applied.scope_desc || "Standard" : "-"}</code></td>
+            <td><code title="${item.current_hash}">${item.current_hash ? item.current_hash.slice(0, 10) + '...' : '-'}</code></td>
+            <td><code title="${item.prev_hash}">${item.prev_hash ? item.prev_hash.slice(0, 10) + '...' : '-'}</code></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error("Failed to load audit logs:", err);
+      }
+    }
+
+    async function verifyChain() {
+      try {
+        const res = await fetch("/api/audit/verify", { method: "POST" });
+        const data = await res.json();
+        const banner = document.getElementById("tamperAlertBanner");
+        const integrityStatus = document.getElementById("chainIntegrityStatus");
+
+        if (data.is_valid) {
+          banner.classList.add("hidden");
+          integrityStatus.textContent = "Verified (100% Chain Integrity)";
+          integrityStatus.className = "text-success";
+          alert("CRYPTOGRAPHIC HASH-CHAIN VERIFIED:\n" + data.message);
+        } else {
+          banner.classList.remove("hidden");
+          banner.innerHTML = `<strong>🚨 TAMPER ALERT DETECTED BY ALGORITHM 2:</strong><br>${data.message.replace(/\\n/g, '<br>')}`;
+          integrityStatus.textContent = "TAMPER DETECTED!";
+          integrityStatus.className = "text-danger";
+        }
+      } catch (err) {
+        alert("Verification error: " + err.message);
+      }
+    }
+
+    async function simulateTamper() {
+      if (!confirm("This will simulate an attacker modifying a row in the audit database file without recalculating hashes.\nProceed?")) return;
+      try {
+        const res = await fetch("/api/audit/simulate-tamper", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ entry_index: 1 })
+        });
+        const data = await res.json();
+        alert("ATTACK SIMULATED:\n" + data.message + "\nNow click 'Verify Hash Chain' to see the cryptographic verifier catch it!");
+        await loadAuditLogs();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function approveDraftPolicy() {
+      try {
+        const res = await fetch("/api/policy/approve-draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ approver_id: "compliance_director_02" })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById("approver2Status").textContent = "✓ Approver 2: Signed by compliance_director_02";
+          document.getElementById("approver2Status").className = "sig-badge signed";
+          document.getElementById("policyVersionText").textContent = data.new_version;
+          alert(`Policy ${data.new_version} successfully ratified by dual approvers and activated hospital-wide!`);
+        } else {
+          alert("Approval error: " + data.detail);
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

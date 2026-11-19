@@ -134,13 +134,44 @@ class RequestEnforcementPipeline:
             }
 
         # --- STEP 3: ENFORCED RETRIEVAL ---
-        # Detect if query targets specific patient IDs (e.g., "P-1042", "P-3307")
+        q_lower = query.lower()
+
+        # 1. Detect patient mentions by ID (e.g. "P-1042", "P-3307")
         direct_mentions = re.findall(r"P-\d{4}", query.upper())
+
+        # 2. Detect patient mentions by known full or partial names
+        known_name_map = {
+            "eleanor vance": "P-1042",
+            "eleanor": "P-1042",
+            "marcus sterling": "P-2210",
+            "marcus": "P-2210",
+            "sophia thorne": "P-3307",
+            "sophia": "P-3307",
+            "daniel hayes": "P-4180",
+            "daniel": "P-4180",
+            "grace hopper": "P-5592",
+            "hopper": "P-5592"
+        }
+        for name_key, pid in known_name_map.items():
+            if re.search(r"\b" + re.escape(name_key) + r"\b", q_lower):
+                if pid not in direct_mentions:
+                    direct_mentions.append(pid)
+
+        # 3. Detect conversational / greeting queries
+        is_conversational = any(
+            re.search(r"\b" + re.escape(w) + r"\b", q_lower)
+            for w in ["hello", "hi", "hey", "who are you", "help", "what can you do", "system status", "good morning", "good evening"]
+        ) and not direct_mentions and not any(w in q_lower for w in ["patient", "diagnosis", "vital", "vitals", "note", "record", "medication", "allergy", "phone", "ssn", "balance"])
+
         target_patients = []
         retrieved_docs = []
         is_target_out_of_scope = False
 
-        if direct_mentions:
+        if is_conversational:
+            # Standby conversational clinical query - do not dump patient records
+            target_patients = []
+            retrieved_docs = []
+        elif direct_mentions:
             for pid in direct_mentions:
                 # Check if patient ID is within allowed scope
                 if filters["allowed_patient_ids"] is not None and pid not in filters["allowed_patient_ids"]:
@@ -170,17 +201,17 @@ class RequestEnforcementPipeline:
                     allowed_categories=filters["allowed_categories"],
                     department=filters["department"],
                     ward=filters["ward"],
-                    top_k=3
+                    top_k=4
                 )
         else:
-            # Broad/general clinical query
+            # Broad/general clinical query within permitted scope
             retrieved_docs = self.vector_store.search(
                 query=query,
                 allowed_patient_ids=filters["allowed_patient_ids"],
                 allowed_categories=filters["allowed_categories"],
                 department=filters["department"],
                 ward=filters["ward"],
-                top_k=3
+                top_k=4
             )
             target_patients = list(dict.fromkeys([d["patient_id"] for d in retrieved_docs]))
 
@@ -189,18 +220,23 @@ class RequestEnforcementPipeline:
         doc_ids = [d["doc_id"] for d in retrieved_docs]
         role_pol = self.policy_engine.get_role_policy(role)
 
-        for pid in target_patients:
-            pt_record = self.repository.get_patient_by_id(pid)
-            if pt_record:
-                masked_pt = FieldMasker.mask_patient_record(pt_record, filters["field_masks"], role)
-                pt_context = FieldMasker.format_patient_context(masked_pt, role_pol, role)
-                raw_context_parts.append(pt_context)
-                doc_ids.append(f"PATIENT_RECORD_{pid}")
+        if is_conversational:
+            final_context = "[CONVERSATIONAL QUERY - CLINICAL ASSISTANT MODE]"
+        elif is_target_out_of_scope and not target_patients:
+            final_context = f"[NO DOCUMENTS RETRIEVED - Patient {', '.join(direct_mentions)} is outside permitted scope ({role})]"
+        else:
+            for pid in target_patients:
+                pt_record = self.repository.get_patient_by_id(pid)
+                if pt_record:
+                    masked_pt = FieldMasker.mask_patient_record(pt_record, filters["field_masks"], role)
+                    pt_context = FieldMasker.format_patient_context(masked_pt, role_pol, role)
+                    raw_context_parts.append(pt_context)
+                    doc_ids.append(f"PATIENT_RECORD_{pid}")
 
-        for d in retrieved_docs:
-            raw_context_parts.append(f"[Document {d['doc_id']} | Cat: {d['category']}]: {d['text']}")
+            for d in retrieved_docs:
+                raw_context_parts.append(f"[Document {d['doc_id']} | Cat: {d['category']}]: {d['text']}")
 
-        final_context = "\n\n".join(raw_context_parts) if raw_context_parts else ""
+            final_context = "\n\n".join(raw_context_parts) if raw_context_parts else ""
 
         pipeline_telemetry["step3_retrieval"] = {
             "documents_found": len(retrieved_docs),
