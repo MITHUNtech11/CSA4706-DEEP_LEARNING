@@ -1,0 +1,139 @@
+# ==============================================================================
+# Git Ignore Configuration - CSA4706 Deep Learning Repository
+# Only Word documents (.docx) and PDFs (.pdf) are committed for submission
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Appendices, Documentation Dumps & Checkpoints
+# ------------------------------------------------------------------------------
+[Aa]ppendix/
+[Aa]ppendix*/
+APPENDIX.md
+*appendix*
+SESSION_STATE.md
+*/SESSION_STATE.md
+*/*/SESSION_STATE.md
+
+# ------------------------------------------------------------------------------
+# Data & Datasets
+# ------------------------------------------------------------------------------
+[Dd]ata/
+[Dd]ata*/
+*.npz
+*.db
+*.sqlite
+*.sqlite3
+*.txt
+
+# ------------------------------------------------------------------------------
+# Results, Metrics, Exports & Model Weights
+# ------------------------------------------------------------------------------
+[Rr]esults/
+[Rr]esults*/
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.pb
+*.onnx
+*.csv
+*.json
+
+# ------------------------------------------------------------------------------
+# Source Code, Scripts & Application Modules
+# ------------------------------------------------------------------------------
+*.py
+*.py[cod]
+*.ps1
+*.sh
+*.bat
+*.ini
+[Ss]rc/
+[Tt]ests/
+[Ss]cripts/
+[Ww]eb/
+[Pp]olicies/
+[Tt]emplates/
+[Ff]igures/
+*.png
+*.jpg
+*.jpeg
+*.svg
+
+# ------------------------------------------------------------------------------
+# Python & Environment Artifacts
+# ------------------------------------------------------------------------------
+__pycache__/
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.pytest_cache/
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+requirements.txt
+*/requirements.txt
+
+# ------------------------------------------------------------------------------
+# Microsoft Office Temporary & Lock Files
+# ------------------------------------------------------------------------------
+~$*.docx
+~$*.doc
+~$*.pptx
+~$*.xlsx
+*.tmp
+*backup*
+
+# ------------------------------------------------------------------------------
+# OS & Editor Artifacts
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+[Ll]ogs/
+*.log
+
+# ------------------------------------------------------------------------------
+# Explicit Whitelist: Track Core Repo Metadata, Word Documents and PDFs
+# ------------------------------------------------------------------------------
+!README.md
+!*/README.md
+!.gitignore
+!LICENSE
+!*.docx
+!*.pdf
+
+# Exclude backup documents
+*backup*.docx
