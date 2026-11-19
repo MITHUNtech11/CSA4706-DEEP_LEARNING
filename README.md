@@ -35,7 +35,7 @@ The repository is structured into three comprehensive modules spanning agricultu
 |:---|:---|:---|:---|
 | **CO1-AT1** | [`AgriVision_Deep_Learning_Answers_Completed.docx`](./CO1-AT1/AgriVision_Deep_Learning_Assignment_Answers_Completed.docx) | [`AgriVision_Deep_Learning_Answers_Completed.pdf`](./CO1-AT1/AgriVision_Deep_Learning_Assignment_Answers_Completed.pdf) | Agricultural Foliar Vision Diagnostics (PlantVillage) |
 | **CO1-AT2** | [`CSA47_CO1_Assessment2_Completed.docx`](./CO1-AT2/CSA47_CO1_Assessment2_Completed.docx) | [`CSA47_CO1_Assessment2_Completed.pdf`](./CO1-AT2/CSA47_CO1_Assessment2_Completed.pdf) | Mathematical Foundations in Clinical Screening (RetinaCare) |
-| **Capstone** | — | [`Secure_RAG_RBAC_Hospital.pdf`](./Capstone/Secure_RAG_RBAC_Hospital.pdf) | Hospital RAG Zero-Trust Access Control & Auditing |
+| **Capstone** | — | [`Secure_RAG_RBAC_Hospital.pdf`](./Capstone/Secure_RAG_RBAC_Hospital.pdf) | Hospital RAG Zero-Trust Access Control & Auditing (Full Implementation) |
 
 ---
 
@@ -78,9 +78,22 @@ CSA4706 - DEEP LEARNING/
 │   ├── CSA47_CO1_..._Completed.docx       # Final Word submission deliverable (31 pages)
 │   └── CSA47_CO1_..._Completed.pdf        # Verified PDF export
 │
-└── Capstone/                              # Capstone Research Project
-    ├── README.md                          # Project overview & system architecture
-    └── Secure_RAG_RBAC_Hospital.pdf       # Final presentation slide deck
+└── Capstone/                              # Capstone Research & Implementation Project
+    ├── README.md                          # Architecture & setup documentation
+    ├── Secure_RAG_RBAC_Hospital.pdf       # Presentation slide deck
+    ├── requirements.txt                   # Capstone service dependencies
+    ├── pytest.ini                         # Test runner configuration
+    ├── data/                              # Synthetic patient database & generator
+    ├── policies/                          # Granular JSON access control policies
+    ├── scripts/                           # Security evaluation & interactive CLI
+    ├── src/                               # 3-tier security architecture implementation
+    │   ├── api/                           # FastAPI service & REST endpoints
+    │   ├── module1_identity_policy/       # IdP authentication & policy engine
+    │   ├── module2_enforced_retrieval/    # Pre-retrieval SQL/vector filtering
+    │   └── module3_generation_audit/      # Output guards & hash-chained audit
+    ├── templates/                         # Server-side Jinja2 prompt templates
+    ├── tests/                             # Comprehensive end-to-end & security tests
+    └── web/                               # Interactive hospital control panel UI
 ```
 
 ---

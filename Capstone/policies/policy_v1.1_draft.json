@@ -1,0 +1,26 @@
+{
+  "policy_version": "v1.1-draft",
+  "created_at": "2026-11-19T14:30:00Z",
+  "proposed_by": "compliance_officer_sarah",
+  "approved_by": [
+    "admin_chief_officer_01"
+  ],
+  "pending_approvers": [
+    "compliance_director_02"
+  ],
+  "status": "PENDING_SECOND_APPROVAL",
+  "change_summary": "Add Medical Researcher role with de-identified aggregate clinical view and zero personal identifiers.",
+  "new_roles": {
+    "Clinical Researcher": {
+      "level": 2,
+      "permissions": {
+        "full_medical_record": false,
+        "general_clinical_details": true,
+        "personal_identifiers": false
+      },
+      "scope": "DE_IDENTIFIED_COHORT",
+      "allowed_actions": ["read_clinical_aggregate"],
+      "field_masking": ["full_name", "patient_id", "phone_number", "home_address", "national_id"]
+    }
+  }
+}

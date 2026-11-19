@@ -1,0 +1,169 @@
+{
+  "policy_version": "v1.1",
+  "created_at": "2026-11-19T10:00:00Z",
+  "approved_by": [
+    "admin_chief_officer_01",
+    "compliance_director_02"
+  ],
+  "status": "ACTIVE",
+  "description": "Hospital Role-Based Access Control Matrix for RAG Retrieval & Generation",
+  "categories": {
+    "full_medical_record": {
+      "description": "Clinical notes, progress notes, laboratory reports, imaging findings, pathology, and prescriptions.",
+      "fields": [
+        "clinical_notes",
+        "lab_reports",
+        "imaging_reports",
+        "prescriptions",
+        "surgical_history"
+      ]
+    },
+    "general_clinical_details": {
+      "description": "Diagnosis summary, documented allergies, active medications, vitals summary, and attending staff.",
+      "fields": [
+        "diagnosis",
+        "allergies",
+        "active_medications",
+        "vital_signs",
+        "admission_status"
+      ]
+    },
+    "personal_identifiers": {
+      "description": "Direct identifying personal details including contact information and government identifiers.",
+      "fields": [
+        "full_name",
+        "patient_id",
+        "phone_number",
+        "home_address",
+        "national_id",
+        "insurance_id"
+      ]
+    }
+  },
+  "roles": {
+    "Chief Medical Officer": {
+      "level": 5,
+      "permissions": {
+        "full_medical_record": true,
+        "general_clinical_details": true,
+        "personal_identifiers": true
+      },
+      "scope": "ALL_PATIENTS",
+      "allowed_actions": [
+        "read_clinical",
+        "read_identifiers",
+        "audit_review"
+      ],
+      "field_masking": []
+    },
+    "Department Head": {
+      "level": 4,
+      "permissions": {
+        "full_medical_record": true,
+        "general_clinical_details": true,
+        "personal_identifiers": true
+      },
+      "scope": "OWN_DEPARTMENT",
+      "allowed_actions": [
+        "read_clinical",
+        "read_identifiers"
+      ],
+      "field_masking": []
+    },
+    "Treating Doctor": {
+      "level": 3,
+      "permissions": {
+        "full_medical_record": "ASSIGNED_OR_REFERRAL",
+        "general_clinical_details": "ASSIGNED_OR_REFERRAL",
+        "personal_identifiers": "ASSIGNED_OR_REFERRAL"
+      },
+      "scope": "ASSIGNED_AND_REFERRED",
+      "allowed_actions": [
+        "read_clinical",
+        "read_identifiers"
+      ],
+      "field_masking": []
+    },
+    "Nurse": {
+      "level": 2,
+      "permissions": {
+        "full_medical_record": false,
+        "general_clinical_details": true,
+        "personal_identifiers": "ASSIGNED_ONLY_MASKED"
+      },
+      "scope": "ASSIGNED_WARD",
+      "allowed_actions": [
+        "read_clinical_general"
+      ],
+      "field_masking": [
+        "phone_number",
+        "home_address",
+        "national_id"
+      ]
+    },
+    "Front Desk / Billing Staff": {
+      "level": 1,
+      "permissions": {
+        "full_medical_record": false,
+        "general_clinical_details": "BILLING_ONLY",
+        "personal_identifiers": "CONTACT_ONLY"
+      },
+      "scope": "TASK_SPECIFIC",
+      "allowed_actions": [
+        "read_billing",
+        "read_contact"
+      ],
+      "field_masking": [
+        "clinical_notes",
+        "lab_reports",
+        "prescriptions",
+        "national_id"
+      ]
+    },
+    "System Administrator": {
+      "level": 0,
+      "permissions": {
+        "full_medical_record": false,
+        "general_clinical_details": false,
+        "personal_identifiers": false
+      },
+      "scope": "CONTROL_PANEL_ONLY",
+      "allowed_actions": [
+        "manage_policy",
+        "view_audit_logs",
+        "view_system_health"
+      ],
+      "field_masking": [
+        "*"
+      ]
+    },
+    "Clinical Researcher": {
+      "level": 2,
+      "permissions": {
+        "full_medical_record": false,
+        "general_clinical_details": true,
+        "personal_identifiers": false
+      },
+      "scope": "DE_IDENTIFIED_COHORT",
+      "allowed_actions": [
+        "read_clinical_aggregate"
+      ],
+      "field_masking": [
+        "full_name",
+        "patient_id",
+        "phone_number",
+        "home_address",
+        "national_id"
+      ]
+    }
+  },
+  "rules": {
+    "fail_closed": true,
+    "deny_by_default": true,
+    "require_signed_token": true,
+    "disallow_chat_role_override": true,
+    "untrusted_context_demarcation": true,
+    "require_hash_chain_logging": true,
+    "referral_expiration_enforced": true
+  }
+}

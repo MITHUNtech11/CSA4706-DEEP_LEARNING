@@ -1,69 +1,14 @@
 # ==============================================================================
 # Git Ignore Configuration - CSA4706 Deep Learning Repository
-# Only Word documents (.docx) and PDFs (.pdf) are committed for submission
+# Note: Assignment rules (only Word & PDF) apply strictly to CO1-AT1 & CO1-AT2.
+# Capstone project is a complete implementation codebase and is fully tracked.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# Appendices, Documentation Dumps & Checkpoints
-# ------------------------------------------------------------------------------
-[Aa]ppendix/
-[Aa]ppendix*/
-APPENDIX.md
-*appendix*
-SESSION_STATE.md
-*/SESSION_STATE.md
-*/*/SESSION_STATE.md
-
-# ------------------------------------------------------------------------------
-# Data & Datasets
-# ------------------------------------------------------------------------------
-[Dd]ata/
-[Dd]ata*/
-*.npz
-*.db
-*.sqlite
-*.sqlite3
-*.txt
-
-# ------------------------------------------------------------------------------
-# Results, Metrics, Exports & Model Weights
-# ------------------------------------------------------------------------------
-[Rr]esults/
-[Rr]esults*/
-*.pt
-*.pth
-*.ckpt
-*.h5
-*.pb
-*.onnx
-*.csv
-*.json
-
-# ------------------------------------------------------------------------------
-# Source Code, Scripts & Application Modules
-# ------------------------------------------------------------------------------
-*.py
-*.py[cod]
-*.ps1
-*.sh
-*.bat
-*.ini
-[Ss]rc/
-[Tt]ests/
-[Ss]cripts/
-[Ww]eb/
-[Pp]olicies/
-[Tt]emplates/
-[Ff]igures/
-*.png
-*.jpg
-*.jpeg
-*.svg
-
-# ------------------------------------------------------------------------------
-# Python & Environment Artifacts
+# Python & Bytecode
 # ------------------------------------------------------------------------------
 __pycache__/
+*.py[cod]
 *$py.class
 *.so
 .Python
@@ -84,6 +29,10 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# ------------------------------------------------------------------------------
+# Virtual Environments & Caches
+# ------------------------------------------------------------------------------
 .venv/
 venv/
 ENV/
@@ -93,18 +42,22 @@ venv.bak/
 .pytest_cache/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-requirements.txt
-*/requirements.txt
 
 # ------------------------------------------------------------------------------
-# Microsoft Office Temporary & Lock Files
+# Temporary Files, Logs & Checkpoints
 # ------------------------------------------------------------------------------
 ~$*.docx
 ~$*.doc
 ~$*.pptx
 ~$*.xlsx
 *.tmp
-*backup*
+*backup*.docx
+*.log
+logs/
+Capstone/logs/
+SESSION_STATE.md
+*/SESSION_STATE.md
+*/*/SESSION_STATE.md
 
 # ------------------------------------------------------------------------------
 # OS & Editor Artifacts
@@ -122,18 +75,21 @@ Thumbs.db
 *.swp
 *.swo
 *~
-[Ll]ogs/
-*.log
 
 # ------------------------------------------------------------------------------
-# Explicit Whitelist: Track Core Repo Metadata, Word Documents and PDFs
+# Coursework Assignment Exclusions (CO1-AT1 & CO1-AT2 ONLY)
+# For these two modules, only Word and PDF deliverables are committed to GitHub.
 # ------------------------------------------------------------------------------
-!README.md
-!*/README.md
-!.gitignore
-!LICENSE
-!*.docx
-!*.pdf
+APPENDIX.md
+CO1-AT1/appendix/
+CO1-AT1/data/
+CO1-AT1/results/
+CO1-AT1/*.py
+CO1-AT1/*.txt
+CO1-AT1/*.ps1
 
-# Exclude backup documents
-*backup*.docx
+CO1-AT2/appendix/
+CO1-AT2/figures/
+CO1-AT2/*.py
+CO1-AT2/*.txt
+CO1-AT2/*.ps1
