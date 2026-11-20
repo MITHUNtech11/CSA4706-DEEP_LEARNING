@@ -71,3 +71,13 @@ def test_login_hub_accessible(client):
     assert "Treating Doctor" in res.text
     assert 'src="/login.js"' in res.text
 
+
+def test_portal_common_script_has_route_guard_and_logout(client):
+    """Verifies that portal_common.js contains fail-closed route redirection and logout handling."""
+    res = client.get("/portal_common.js")
+    assert res.status_code == 200
+    assert "auth_required" in res.text
+    assert "logoutBtn" in res.text
+    assert "sessionStorage.removeItem" in res.text
+
+

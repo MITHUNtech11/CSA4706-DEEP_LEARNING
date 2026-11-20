@@ -27,6 +27,7 @@
       <div class="header-badges">
         <span class="badge policy-badge">Policy: v1.0 ACTIVE</span>
         <span class="badge live-badge">Fail-Closed Active</span>
+        <a href="/login" class="btn btn-primary" style="font-size:0.8rem; padding:0.35rem 0.75rem;">Role Login Hub</a>
       </div>
     </div>
   </header>
@@ -262,32 +263,29 @@
   </main>
 
   <script>
-    async function launchPortal(roleName, targetUrl) {
-      const personaMap = {
-        "Chief Medical Officer": "CMO_501",
-        "Department Head": "DH_401",
-        "Treating Doctor": "DR_302",
-        "Nurse": "RN_201",
-        "Front Desk / Billing Staff": "FD_101",
-        "System Administrator": "SYS_999"
+    function launchPortal(roleName, targetUrl) {
+      const roleKeyMap = {
+        "Chief Medical Officer": "cmo",
+        "Department Head": "dept-head",
+        "Treating Doctor": "doctor",
+        "Nurse": "nurse",
+        "Front Desk / Billing Staff": "billing",
+        "System Administrator": "admin"
       };
 
-      const userId = personaMap[roleName];
-      try {
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId })
-        });
-        const data = await res.json();
-        sessionStorage.setItem("hospital_auth", JSON.stringify({
-          token: data.token,
-          persona: data.persona
-        }));
-        window.location.href = targetUrl;
-      } catch (err) {
-        alert("Authentication failed: " + err.message);
+      const stored = sessionStorage.getItem("hospital_auth");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.persona && parsed.persona.role === roleName && parsed.token) {
+            window.location.href = targetUrl;
+            return;
+          }
+        } catch (e) {}
       }
+
+      const roleKey = roleKeyMap[roleName] || "doctor";
+      window.location.href = `/login?role=${roleKey}`;
     }
   </script>
 </body>

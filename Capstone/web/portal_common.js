@@ -1,12 +1,12 @@
 // Hospital RAG RBAC - Shared Portal Engine & Route Guard
 
-const DEFAULT_PERSONAS = {
-  "Chief Medical Officer": "CMO_501",
-  "Department Head": "DH_401",
-  "Treating Doctor": "DR_302",
-  "Nurse": "RN_201",
-  "Front Desk / Billing Staff": "FD_101",
-  "System Administrator": "SYS_999"
+const ROLE_KEY_MAP = {
+  "Chief Medical Officer": "cmo",
+  "Department Head": "dept-head",
+  "Treating Doctor": "doctor",
+  "Nurse": "nurse",
+  "Front Desk / Billing Staff": "billing",
+  "System Administrator": "admin"
 };
 
 let currentAuth = {
@@ -37,26 +37,11 @@ async function initPortal(roleName, minLevel, isClinical = true) {
     }
   }
 
-  // 2. If no valid session for this role, auto-authenticate with the canonical persona
+  // 2. Strict Fail-Closed Route Guard: If no valid session for this role, redirect to Login Hub
   if (needLogin) {
-    const userId = DEFAULT_PERSONAS[roleName];
-    if (userId) {
-      try {
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId })
-        });
-        const data = await res.json();
-        currentAuth = {
-          token: data.token,
-          persona: data.persona
-        };
-        sessionStorage.setItem("hospital_auth", JSON.stringify(currentAuth));
-      } catch (err) {
-        console.error("Auto-login failed:", err);
-      }
-    }
+    const roleKey = ROLE_KEY_MAP[roleName] || "doctor";
+    window.location.href = `/login?role=${roleKey}&msg=auth_required`;
+    return;
   }
 
   // 3. Render common header elements
@@ -132,7 +117,8 @@ function renderPortalHeader(isClinical) {
         <span class="badge live-badge">Fail-Closed Active</span>
         <button class="btn btn-outline" id="viewTokenBtn">Inspect JWT</button>
         ${breakGlassBtn}
-        <a href="/portal/gateway" class="btn btn-primary switch-btn">Switch Portal</a>
+        <a href="/login" class="btn btn-primary switch-btn">Switch Role</a>
+        <button class="btn btn-outline" id="logoutBtn" style="color:var(--danger-crimson); border-color:#fecdd3;">Log Out</button>
       </div>
     </div>
   `;
@@ -140,6 +126,14 @@ function renderPortalHeader(isClinical) {
   const bgBtn = document.getElementById("breakGlassBtn");
   if (bgBtn) {
     bgBtn.addEventListener("click", handleBreakGlass);
+  }
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("hospital_auth");
+      window.location.href = "/login";
+    });
   }
 }
 
