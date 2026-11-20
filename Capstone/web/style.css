@@ -787,3 +787,106 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* --- Role Login Hub Component Styles --- */
+.alert-notice {
+  background-color: var(--blue-light);
+  color: var(--medical-blue-dark);
+  border: 1px solid #7dd3fc;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.alert-error {
+  background-color: var(--danger-light);
+  color: var(--danger-crimson);
+  border: 1px solid #fecdd3;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  font-weight: 500;
+}
+
+.role-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.role-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.role-tab-btn:hover {
+  background: #ffffff;
+  border-color: var(--primary-teal);
+  color: var(--primary-teal);
+}
+
+.role-tab-btn.active {
+  background: var(--primary-teal);
+  border-color: var(--primary-teal);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-level-tag {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 700;
+}
+
+.role-tab-btn.active .tab-level-tag {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.role-login-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.role-context-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.role-scope-box {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+}
+

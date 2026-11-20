@@ -110,6 +110,16 @@ def portal_gateway():
     return FileResponse(WEB_DIR / "index.html")
 
 
+@app.get("/login")
+def portal_login():
+    return FileResponse(WEB_DIR / "login.html")
+
+
+@app.get("/")
+def portal_root():
+    return FileResponse(WEB_DIR / "login.html")
+
+
 # Static Asset Fallback under /portal/ (fixes relative requests like /portal/style.css)
 @app.get("/portal/{asset_name:path}")
 def portal_static_fallback(asset_name: str):

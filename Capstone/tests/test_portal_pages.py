@@ -14,7 +14,8 @@ def client():
 
 
 PORTAL_ROUTES = [
-    ("/", "Role Gateway & Portals Directory"),
+    ("/", "Role Login Hub"),
+    ("/login", "Role Login Hub"),
     ("/portal/gateway", "Role Gateway & Portals Directory"),
     ("/portal/cmo", "Chief Medical Officer Portal"),
     ("/portal/dept-head", "Department Head Portal"),
@@ -33,7 +34,7 @@ def test_portal_routes_accessible(client, route, title_keyword):
     assert title_keyword in res.text
     assert "Hospital RAG" in res.text
     assert 'href="/style.css"' in res.text
-    if route != "/" and route != "/portal/gateway":
+    if route not in ["/", "/login", "/portal/gateway"]:
         assert 'src="/portal_common.js"' in res.text
 
 
@@ -58,3 +59,15 @@ def test_static_assets_and_fallbacks(client):
 
     portal_js_res = client.get("/portal/portal_common.js")
     assert portal_js_res.status_code == 200
+
+
+def test_login_hub_accessible(client):
+    """Verifies that the /login endpoint loads successfully with role tabs."""
+    res = client.get("/login")
+    assert res.status_code == 200
+    assert "Hospital Clinical RAG" in res.text
+    assert "Role Login Hub" in res.text
+    assert "Chief Medical Officer" in res.text
+    assert "Treating Doctor" in res.text
+    assert 'src="/login.js"' in res.text
+
