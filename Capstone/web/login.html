@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Header Bar -->
   <header class="app-header">
     <div class="header-content">
       <div class="brand">
@@ -34,131 +35,304 @@
     </div>
   </header>
 
-  <main class="container" style="max-width: 980px;">
-    <!-- Welcome Header Card -->
-    <section class="card" style="text-align: center; padding: 1.75rem 1.5rem;">
-      <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem;">
-        Hospital Staff &amp; Faculty Role Login Hub
-      </h2>
-      <p style="font-size: 0.92rem; color: var(--text-muted); max-width: 680px; margin: 0 auto;">
-        Authenticate with authorized credentials to enter your role-specific clinical station or administrative console. Each role enforces cryptographic JWT claims and retrieval pre-filtering.
-      </p>
+  <main class="container" style="max-width: 1140px;">
 
-      <!-- Alert / Guard Banner -->
-      <div id="noticeBanner" class="alert-notice" style="display:none;"></div>
+    <!-- ============================================================== -->
+    <!-- STEP 1: CLEAN ROLE SELECTION VIEW (DEFAULT)                   -->
+    <!-- ============================================================== -->
+    <section id="roleSelectionSection">
+      <!-- Welcome Intro -->
+      <div class="card" style="text-align: center; padding: 2rem 1.5rem; margin-bottom: 1.25rem;">
+        <span class="step-indicator">Step 1 of 2: Select Role</span>
+        <h2 style="font-size: 1.65rem; font-weight: 700; color: #0f172a; margin-bottom: 0.4rem;">
+          Hospital Role Login Hub
+        </h2>
+        <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 640px; margin: 0 auto;">
+          Choose your clinical or administrative role below to sign in and view your tier's enforced retrieval boundaries and access controls.
+        </p>
+        <!-- Notice if redirected from unauthenticated session -->
+        <div id="noticeBanner" class="alert-notice" style="display:none; max-width: 680px; margin: 1rem auto 0 auto;"></div>
+      </div>
+
+      <!-- 6 Hospital Roles Grid -->
+      <div class="role-select-grid">
+        <!-- Role 1: CMO (Level 5) -->
+        <div class="role-select-card" data-role="cmo" onclick="selectRole('cmo')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#e0f2fe; color:#0369a1;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:700;">Level 5</span>
+            </div>
+            <div class="role-card-body">
+              <h3>Chief Medical Officer</h3>
+              <p class="role-card-dept">Executive / Clinical Quality</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Dr. Arthur Campbell (CMO_501)
+              </p>
+              <div class="role-card-scope-snippet">
+                Full clinical records &amp; identifier audit oversight across all wards and specialties.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Role 2: Department Head (Level 4) -->
+        <div class="role-select-card" data-role="dept-head" onclick="selectRole('dept-head')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#dcfce7; color:#15803d;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <span class="badge" style="background:#dcfce7; color:#15803d; font-weight:700;">Level 4</span>
+            </div>
+            <div class="role-card-body">
+              <h3>Department Head</h3>
+              <p class="role-card-dept">Cardiology Department</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Dr. Helena Vance (DH_401)
+              </p>
+              <div class="role-card-scope-snippet">
+                Cardiology census, attending assignments &amp; notes. Out-of-dept queries strictly refused.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Role 3: Treating Doctor (Level 3) -->
+        <div class="role-select-card" data-role="doctor" onclick="selectRole('doctor')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#ccfbf1; color:#0f766e;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
+              <span class="badge" style="background:#ccfbf1; color:#0f766e; font-weight:700;">Level 3</span>
+            </div>
+            <div class="role-card-body">
+              <h3>Treating Doctor</h3>
+              <p class="role-card-dept">Cardiology / Attending Care-Team</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Dr. Rohit Sharma (DR_302)
+              </p>
+              <div class="role-card-scope-snippet">
+                Care-team assigned roster + active referrals (P-3307). Expired referrals (P-4180) refused.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Role 4: Nurse (Level 2) -->
+        <div class="role-select-card" data-role="nurse" onclick="selectRole('nurse')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#fef3c7; color:#b45309;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <span class="badge" style="background:#fef3c7; color:#b45309; font-weight:700;">Level 2</span>
+            </div>
+            <div class="role-card-body">
+              <h3>Nurse</h3>
+              <p class="role-card-dept">Ward 3 Bedside Care</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Nurse Sarah Connor (RN_201)
+              </p>
+              <div class="role-card-scope-snippet">
+                Bedside care &amp; vitals. Phone numbers and SSN masked at Output Guard. Full notes denied.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Role 5: Billing Staff (Level 1) -->
+        <div class="role-select-card" data-role="billing" onclick="selectRole('billing')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#ede9fe; color:#6d28d9;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 10h20"/></svg>
+              </div>
+              <span class="badge" style="background:#ede9fe; color:#6d28d9; font-weight:700;">Level 1</span>
+            </div>
+            <div class="role-card-body">
+              <h3>Front Desk / Billing</h3>
+              <p class="role-card-dept">Patient Administration</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Alex Jenkins (FD_101)
+              </p>
+              <div class="role-card-scope-snippet">
+                Inpatient billing balances &amp; insurance. Clinical diagnoses and doctor notes strictly blocked.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <!-- Role 6: System Admin (Level 0) -->
+        <div class="role-select-card" data-role="admin" onclick="selectRole('admin')">
+          <div>
+            <div class="role-card-top">
+              <div class="role-icon-box" style="background:#ffe4e6; color:#be123c;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <span class="badge" style="background:#ffe4e6; color:#be123c; font-weight:700;">Level 0</span>
+            </div>
+            <div class="role-card-body">
+              <h3>System Administrator</h3>
+              <p class="role-card-dept">IT Operations &amp; Security</p>
+              <p class="role-card-persona">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Root System Admin (SYS_999)
+              </p>
+              <div class="role-card-scope-snippet">
+                Separation of Duties: SHA-256 tamper engine &amp; policy console. Zero patient clinical data.
+              </div>
+            </div>
+          </div>
+          <div class="role-card-action">
+            <span>Select Station &amp; View Controls</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Role Switcher Tabs (6 Roles) -->
-    <section class="card" style="padding: 1.25rem;">
-      <div class="section-title" style="margin-bottom: 0.75rem;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <h2>Select Role Login Station</h2>
-        <span class="section-hint">Choose your tier below</span>
+    <!-- ============================================================== -->
+    <!-- STEP 2: FOCUSED ROLE STATION & ACCESS CONTROL VIEW             -->
+    <!-- ============================================================== -->
+    <section id="roleStationSection" style="display:none;">
+      <!-- Station Navigation Bar -->
+      <div class="station-top-nav">
+        <button class="btn-back-roles" onclick="backToRoleSelection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back to All Roles
+        </button>
+
+        <!-- Quick Switcher Tabs -->
+        <div class="quick-role-pills" id="quickRolePills">
+          <button class="quick-pill-btn" data-role="cmo" onclick="selectRole('cmo')">CMO (L5)</button>
+          <button class="quick-pill-btn" data-role="dept-head" onclick="selectRole('dept-head')">Dept Head (L4)</button>
+          <button class="quick-pill-btn active" data-role="doctor" onclick="selectRole('doctor')">Doctor (L3)</button>
+          <button class="quick-pill-btn" data-role="nurse" onclick="selectRole('nurse')">Nurse (L2)</button>
+          <button class="quick-pill-btn" data-role="billing" onclick="selectRole('billing')">Billing (L1)</button>
+          <button class="quick-pill-btn" data-role="admin" onclick="selectRole('admin')">Admin (L0)</button>
+        </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <div class="role-nav-tabs" id="roleTabsContainer">
-        <button class="role-tab-btn" data-role="cmo">
-          <span class="tab-level-tag">L5</span>
-          <span class="tab-text">Chief Medical Officer</span>
-        </button>
-        <button class="role-tab-btn" data-role="dept-head">
-          <span class="tab-level-tag">L4</span>
-          <span class="tab-text">Department Head</span>
-        </button>
-        <button class="role-tab-btn active" data-role="doctor">
-          <span class="tab-level-tag">L3</span>
-          <span class="tab-text">Treating Doctor</span>
-        </button>
-        <button class="role-tab-btn" data-role="nurse">
-          <span class="tab-level-tag">L2</span>
-          <span class="tab-text">Nurse</span>
-        </button>
-        <button class="role-tab-btn" data-role="billing">
-          <span class="tab-level-tag">L1</span>
-          <span class="tab-text">Billing Staff</span>
-        </button>
-        <button class="role-tab-btn" data-role="admin">
-          <span class="tab-level-tag">L0</span>
-          <span class="tab-text">System Admin</span>
-        </button>
-      </div>
-
-      <!-- Active Role Login Card -->
-      <div class="role-login-card" id="roleLoginCard">
-        <!-- Dynamic Header info injected by login.js -->
-        <div class="role-context-header">
-          <div>
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.25rem;">
-              <h3 id="roleCardTitle" style="font-size:1.25rem; font-weight:700; color:var(--primary-teal);">Treating Doctor Clinical Station</h3>
-              <span id="roleLevelBadge" class="badge" style="background:var(--blue-light); color:var(--medical-blue-dark); font-weight:700;">Level 3</span>
+      <!-- Station Two-Column Layout -->
+      <div class="station-layout-grid">
+        
+        <!-- Left Column: Authentication Form -->
+        <div class="card" style="padding: 1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+            <div>
+              <span class="step-indicator" style="margin-bottom:0.25rem;">Station Authentication</span>
+              <h3 id="stationTitle" style="font-size:1.3rem; font-weight:700; color:var(--primary-teal); margin-bottom:0.2rem;">
+                Treating Doctor Station
+              </h3>
+              <p id="stationPersona" style="font-size:0.85rem; color:var(--text-muted);">
+                Dr. Rohit Sharma | Cardiology Department
+              </p>
             </div>
-            <p id="rolePersonaSub" style="font-size:0.875rem; color:var(--text-muted);">
-              Dr. Rohit Sharma | Cardiology | Ward 3
-            </p>
-          </div>
-          <span id="roleDeptPill" class="badge policy-badge">Cardiology</span>
-        </div>
-
-        <!-- Scope & Permissions preview -->
-        <div class="role-scope-box">
-          <p id="roleScopeDesc" style="font-size:0.875rem; color:#334155; margin-bottom:0.5rem;">
-            Care-team assigned patients and active cross-department referrals. Out-of-department records and expired referrals strictly refused.
-          </p>
-          <div class="portal-permissions-summary" id="rolePermsList">
-            <!-- Injected by login.js -->
-          </div>
-        </div>
-
-        <!-- Login Form -->
-        <form id="roleLoginForm" class="login-auth-form" onsubmit="return false;">
-          <div id="loginErrorBox" class="alert-error" style="display:none;"></div>
-
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <label for="userIdInput" style="display:block; font-size:0.875rem; font-weight:600; margin-bottom:0.35rem;">
-              Staff Identification ID
-            </label>
-            <input type="text" id="userIdInput" class="form-control" placeholder="e.g. DR_302" required autocomplete="username" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem;">
+            <span id="stationLevelBadge" class="badge" style="background:var(--teal-light); color:var(--primary-teal-hover); font-weight:700; font-size:0.8rem;">
+              Level 3
+            </span>
           </div>
 
-          <div class="form-group" style="margin-bottom: 1.25rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
-              <label for="passwordInput" style="font-size:0.875rem; font-weight:600;">
-                Station Access Password
+          <!-- Alert box -->
+          <div id="stationErrorBox" class="alert-error" style="display:none;"></div>
+          <div id="stationNoticeBox" class="alert-notice" style="display:none; margin-bottom:1rem;"></div>
+
+          <!-- Sign-In Form -->
+          <form id="stationLoginForm" onsubmit="return false;">
+            <div class="form-group" style="margin-bottom: 1.1rem;">
+              <label for="stationUserId" style="display:block; font-size:0.875rem; font-weight:600; margin-bottom:0.35rem; color:#0f172a;">
+                Staff User ID
               </label>
-              <button type="button" id="togglePasswordBtn" style="background:none; border:none; color:var(--primary-teal); font-size:0.8rem; cursor:pointer; font-weight:500;">
-                Show Password
+              <input type="text" id="stationUserId" class="form-control" required autocomplete="username" style="width:100%; padding:0.7rem 0.85rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                <label for="stationPassword" style="font-size:0.875rem; font-weight:600; color:#0f172a;">
+                  Station Password
+                </label>
+                <button type="button" id="stationTogglePassword" style="background:none; border:none; color:var(--primary-teal); font-size:0.8rem; cursor:pointer; font-weight:600;">
+                  Show Password
+                </button>
+              </div>
+              <input type="password" id="stationPassword" class="form-control" required autocomplete="current-password" style="width:100%; padding:0.7rem 0.85rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem;">
+            </div>
+
+            <!-- Quick-Fill Button -->
+            <div style="margin-bottom: 1.25rem;">
+              <button type="button" id="stationQuickFillBtn" class="btn btn-outline" style="width:100%; font-size:0.85rem; padding:0.55rem; display:flex; justify-content:center; align-items:center; gap:0.45rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span id="stationQuickFillText">Quick-Fill Demo Account (DR_302 / doc@123)</span>
               </button>
             </div>
-            <input type="password" id="passwordInput" class="form-control" placeholder="Enter station password" required autocomplete="current-password" style="width:100%; padding:0.65rem 0.85rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem;">
-          </div>
 
-          <!-- Quick-Fill Demo Button -->
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.5rem;">
-            <button type="button" id="quickFillBtn" class="btn btn-outline" style="font-size:0.82rem; padding:0.4rem 0.85rem; display:inline-flex; align-items:center; gap:0.4rem;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span id="quickFillLabel">Quick-Fill Demo Account (DR_302 / doc@123)</span>
+            <!-- Submit CTA -->
+            <button type="submit" id="stationSubmitBtn" class="btn btn-primary" style="width:100%; padding:0.85rem; font-size:1rem; font-weight:600; display:flex; justify-content:center; align-items:center; gap:0.5rem;">
+              <span id="stationSubmitText">Authenticate &amp; Enter Station</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
             </button>
-            <span style="font-size:0.78rem; color:var(--text-muted);">Academic Presentation Preset</span>
+          </form>
+        </div>
+
+        <!-- Right Column: User-Friendly Access Controls -->
+        <div class="access-control-panel">
+          <div class="access-panel-header">
+            <div>
+              <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Role Access Controls &amp; Permissions
+              </h3>
+              <p style="font-size:0.8125rem; color:var(--text-muted); margin-top:0.2rem;">
+                Deterministic pre-filtering applied before SQL, vector search, and LLM context.
+              </p>
+            </div>
+            <span id="controlScopeBadge" class="badge-scope">Ward 3 Scope</span>
           </div>
 
-          <!-- Submit Button -->
-          <button type="submit" id="submitLoginBtn" class="btn btn-primary" style="width:100%; padding:0.85rem; font-size:1rem; font-weight:600; display:flex; justify-content:center; align-items:center; gap:0.5rem;">
-            <span id="submitBtnText">Authenticate &amp; Enter Station</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-          </button>
-        </form>
+          <!-- Dynamic Access Control Items -->
+          <div id="accessControlsList" style="display:flex; flex-direction:column; gap:0.75rem;">
+            <!-- Dynamically populated by login.js -->
+          </div>
+
+          <!-- Security Enforcement Architecture Note -->
+          <div style="background:#f0fdfa; border:1px solid #99f6e4; border-radius:var(--radius-sm); padding:0.75rem 0.95rem; font-size:0.8rem; color:#0f766e; display:flex; gap:0.5rem; align-items:flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:0.15rem;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span><strong>Fail-Closed Guarantee:</strong> Out-of-scope patient data and expired referrals are never fetched from disk or memory. Prompts are sealed in <code>&lt;untrusted_patient_context&gt;</code> blocks.</span>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- Bottom Directory Link Card -->
-    <section class="card" style="display:flex; justify-content:space-between; align-items:center; padding:1rem 1.25rem;">
-      <div>
-        <p style="font-size:0.875rem; font-weight:600; color:#0f172a;">Need to inspect cross-role security boundaries?</p>
-        <p style="font-size:0.8rem; color:var(--text-muted);">View the complete six-tier access control matrix and separation of duties specification.</p>
-      </div>
-      <a href="/portal/gateway" class="btn btn-outline" style="white-space:nowrap;">Open Gateway Directory &rarr;</a>
-    </section>
   </main>
 
   <script src="/login.js"></script>
