@@ -22,19 +22,20 @@ This reference architecture implements a **fail-closed, defense-in-depth securit
 
 ---
 
-## 2. Dedicated Role-Specific Portal Pages
+## 2. Dedicated Role-Specific Portal Pages & Login Hub
 
-The application provides dedicated web portal pages tailored to each role's distinct hospital workflow:
+The application provides dedicated web portal pages tailored to each role's distinct hospital workflow, secured by a unified **Role Login Hub**:
 
-| Portal Endpoint | Role Name | Security Level | Data Scope & Permissions | Dedicated Features |
+| Portal Endpoint | Role Name | Security Level | Data Scope & Permissions | Demo Credentials |
 | :--- | :--- | :---: | :--- | :--- |
+| **`/login` (or `/`)** | **Role Login Hub** | N/A | Multi-Role Authentication | Switchable role tabs + Quick-fill demo presets |
 | **`/portal/gateway`** | **Hospital Role Gateway** | N/A | Overview & Directory | Central launchpad for all 6 roles with permission matrix |
-| **`/portal/cmo`** | **Chief Medical Officer** | Level 5 | All Patients | Cross-department clinical audit overview across all wards |
-| **`/portal/dept-head`** | **Department Head** | Level 4 | Own Dept (Cardiology) | Department census, attending physician assignments |
-| **`/portal/doctor`** | **Treating Doctor** | Level 3 | Care-Team + Referrals | Care-team roster + Active (`P-3307`) & Expired (`P-4180`) referrals |
-| **`/portal/nurse`** | **Nurse** | Level 2 | Assigned Ward 3 | **Slide 3 Prototype**: Ward bedside care, phone masked, full notes denied |
-| **`/portal/billing`** | **Front Desk / Billing** | Level 1 | Task-Specific | Inpatient billing balances & insurance; clinical notes strictly blocked |
-| **`/portal/admin`** | **System Administrator** | Level 0 | Control Panel Only | **Separation of Duties**: Zero clinical access; SHA-256 audit & tamper engine |
+| **`/portal/cmo`** | **Chief Medical Officer** | Level 5 | All Patients | `CMO_501` / `cmo@123` |
+| **`/portal/dept-head`** | **Department Head** | Level 4 | Own Dept (Cardiology) | `DH_401` / `dept@123` |
+| **`/portal/doctor`** | **Treating Doctor** | Level 3 | Care-Team + Referrals | `DR_302` / `doc@123` |
+| **`/portal/nurse`** | **Nurse** | Level 2 | Assigned Ward 3 (PII Masked) | `RN_201` / `nurse@123` |
+| **`/portal/billing`** | **Front Desk / Billing** | Level 1 | Task-Specific (No Clinical) | `FD_101` / `billing@123` |
+| **`/portal/admin`** | **System Administrator** | Level 0 | Control Panel Only (0 Patient Data) | `SYS_999` / `admin@123` |
 
 ---
 
