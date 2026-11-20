@@ -93,11 +93,22 @@ class IdPService:
                 return p
         return None
 
-    def login(self, user_id: str) -> Dict[str, Any]:
-        """Authenticates user ID against IdP and returns a signed token."""
+    def login(self, user_id: str, password: Optional[str] = None) -> Dict[str, Any]:
+        """Authenticates user ID (and optional password) against IdP and returns a signed token."""
         persona = self.get_persona(user_id)
         if not persona:
             raise AuthenticationError(f"FAIL-CLOSED: Unknown user identity '{user_id}'. Request refused.")
+
+        if password is not None:
+            conn = sqlite3.connect(self.db_path)
+            cur = conn.cursor()
+            cur.execute("SELECT password_hash FROM personas WHERE user_id = ?", (user_id,))
+            row = cur.fetchone()
+            conn.close()
+            stored_hash = row[0] if row else None
+
+            if not stored_hash or not verify_password(password, stored_hash):
+                raise AuthenticationError(f"FAIL-CLOSED: Invalid credentials for staff member '{user_id}'.")
 
         token = issue_token(
             user_id=persona["user_id"],

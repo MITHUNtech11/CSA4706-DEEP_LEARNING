@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 class LoginRequest(BaseModel):
     user_id: str = Field(..., json_schema_extra={"example": "DR_302"})
+    password: Optional[str] = Field(None, json_schema_extra={"example": "doc@123"})
 
 
 class BreakGlassRequest(BaseModel):

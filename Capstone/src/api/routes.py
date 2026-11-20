@@ -133,7 +133,7 @@ def get_personas():
 def login(req: LoginRequest):
     """Authenticate staff persona and issue verified JWT."""
     try:
-        return idp_service.login(req.user_id)
+        return idp_service.login(req.user_id, req.password)
     except Exception as e:
         raise HTTPException(status_code=401, detail=str(e))
 

@@ -99,3 +99,21 @@ def test_password_hashing_and_verification():
     assert verify_password("doc@123", hashed) is True
     assert verify_password("wrong_password", hashed) is False
 
+
+def test_login_valid_credentials():
+    """Verify login succeeds with valid user ID and password."""
+    from src.module1_identity_policy.idp_service import IdPService
+    idp = IdPService()
+    res = idp.login("DR_302", "doc@123")
+    assert "token" in res
+    assert res["persona"]["role"] == "Treating Doctor"
+
+
+def test_login_invalid_password_fails_closed():
+    """Verify login raises AuthenticationError on invalid password."""
+    from src.module1_identity_policy.idp_service import IdPService, AuthenticationError
+    idp = IdPService()
+    with pytest.raises(AuthenticationError, match="FAIL-CLOSED: Invalid credentials"):
+        idp.login("DR_302", "wrong_pass")
+
+
