@@ -89,3 +89,13 @@ def test_emergency_break_glass_requires_justification(idp):
     bg_token_info = idp.issue_break_glass_token("DR_302", justification="Cardiac arrest in Ward 3, emergency ICU access.")
     assert bg_token_info["is_break_glass"] is True
     assert bg_token_info["expires_in_minutes"] == 15
+
+
+def test_password_hashing_and_verification():
+    """Verify salted SHA-256 password hashing helper and validation."""
+    from src.module1_identity_policy.idp_service import hash_password, verify_password
+    hashed = hash_password("doc@123")
+    assert "$" in hashed
+    assert verify_password("doc@123", hashed) is True
+    assert verify_password("wrong_password", hashed) is False
+

@@ -3,16 +3,66 @@ Hospital Identity Provider (IdP) Mock Service.
 Manages predefined personas, staff login, and emergency break-glass elevation.
 """
 
+import os
+import hashlib
 import sqlite3
 import json
 from typing import List, Dict, Any, Optional
 from src.config import DB_PATH
 from src.module1_identity_policy.tokens import issue_token, AuthenticationError
 
+DEFAULT_PASSWORDS = {
+    "CMO_501": "cmo@123",
+    "DH_401": "dept@123",
+    "DR_302": "doc@123",
+    "RN_201": "nurse@123",
+    "FD_101": "billing@123",
+    "SYS_999": "admin@123"
+}
+
+
+def hash_password(password: str, salt: Optional[str] = None) -> str:
+    """Hashes a password with a cryptographic salt using SHA-256."""
+    if salt is None:
+        salt = os.urandom(16).hex()
+    hashed = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+    return f"{salt}${hashed}"
+
+
+def verify_password(password: str, hashed_str: str) -> bool:
+    """Verifies a plain password against the stored salt$hash string."""
+    if not hashed_str or "$" not in hashed_str:
+        return False
+    salt, expected_hash = hashed_str.split("$", 1)
+    actual_hash = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+    return actual_hash == expected_hash
+
 
 class IdPService:
     def __init__(self, db_path=DB_PATH):
         self.db_path = db_path
+        self.ensure_password_schema()
+
+    def ensure_password_schema(self):
+        """Ensures password_hash column exists in personas and seeds demo credentials."""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cur = conn.cursor()
+            cur.execute("PRAGMA table_info(personas)")
+            columns = [c[1] for c in cur.fetchall()]
+            if "password_hash" not in columns:
+                cur.execute("ALTER TABLE personas ADD COLUMN password_hash TEXT")
+
+            for uid, pwd in DEFAULT_PASSWORDS.items():
+                cur.execute("SELECT password_hash FROM personas WHERE user_id = ?", (uid,))
+                row = cur.fetchone()
+                if row and not row[0]:
+                    h = hash_password(pwd)
+                    cur.execute("UPDATE personas SET password_hash = ? WHERE user_id = ?", (h, uid))
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
 
     def list_personas(self) -> List[Dict[str, Any]]:
         """Returns all predefined hospital personas for demo & testing."""
