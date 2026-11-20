@@ -3,6 +3,7 @@ Automated Security Benchmark and Red-Teaming Evaluation Suite.
 Measures data leakage rates, false block rates, and cryptographic tamper detection accuracy.
 """
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -84,12 +85,24 @@ def run_benchmark():
     is_valid_initial, _, _ = logger.verify_integrity()
     print(f"Initial Hash-Chain Integrity: {'VERIFIED ✓' if is_valid_initial else 'FAILED ✗'}")
 
-    # Inject tamper
-    tamper_res = logger.simulate_tampering(target_entry_index=1)
-    is_valid_after, alert_msg, _ = logger.verify_integrity()
-    tamper_caught = (not is_valid_after) and ("TAMPER ALERT" in alert_msg)
-    print(f"Malicious File Modification Injected at Entry #{tamper_res['entry_index']}")
-    print(f"Tamper Caught by Verifier:    {'YES (100% Detection) ✓' if tamper_caught else 'NO (Failed) ✗'}")
+    # Backup audit log to preserve database health for subsequent test runs
+    original_log_bytes = None
+    if os.path.exists(logger.log_path):
+        with open(logger.log_path, "rb") as f:
+            original_log_bytes = f.read()
+
+    try:
+        # Inject tamper
+        tamper_res = logger.simulate_tampering(target_entry_index=1)
+        is_valid_after, alert_msg, _ = logger.verify_integrity()
+        tamper_caught = (not is_valid_after) and ("TAMPER ALERT" in alert_msg)
+        print(f"Malicious File Modification Injected at Entry #{tamper_res['entry_index']}")
+        print(f"Tamper Caught by Verifier:    {'YES (100% Detection) ✓' if tamper_caught else 'NO (Failed) ✗'}")
+    finally:
+        # Restore clean audit chain
+        if original_log_bytes is not None:
+            with open(logger.log_path, "wb") as f:
+                f.write(original_log_bytes)
 
     print("\n" + "=" * 70)
     print(" BENCHMARK SUMMARY RESULTS")

@@ -81,3 +81,27 @@ def test_portal_common_script_has_route_guard_and_logout(client):
     assert "sessionStorage.removeItem" in res.text
 
 
+def test_api_login_http_validation(client):
+    """Verifies HTTP /api/auth/login enforces password validation and fail-closed security."""
+    # 1. Valid credentials
+    res_ok = client.post("/api/auth/login", json={"user_id": "DR_302", "password": "doc@123"})
+    assert res_ok.status_code == 200
+    assert "token" in res_ok.json()
+    assert res_ok.json()["persona"]["role"] == "Treating Doctor"
+
+    # 2. Invalid password -> 401
+    res_bad_pwd = client.post("/api/auth/login", json={"user_id": "DR_302", "password": "wrong_password"})
+    assert res_bad_pwd.status_code == 401
+    assert "FAIL-CLOSED" in res_bad_pwd.json()["detail"]
+
+    # 3. Missing password -> 401 or 422
+    res_no_pwd = client.post("/api/auth/login", json={"user_id": "DR_302"})
+    assert res_no_pwd.status_code in [401, 422]
+
+    # 4. Unknown user -> 401
+    res_unk = client.post("/api/auth/login", json={"user_id": "FAKE_USER", "password": "any"})
+    assert res_unk.status_code == 401
+    assert "FAIL-CLOSED" in res_unk.json()["detail"]
+
+
+

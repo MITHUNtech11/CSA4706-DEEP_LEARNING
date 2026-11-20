@@ -132,6 +132,8 @@ def get_personas():
 @router.post("/auth/login")
 def login(req: LoginRequest):
     """Authenticate staff persona and issue verified JWT."""
+    if not req.password:
+        raise HTTPException(status_code=401, detail="FAIL-CLOSED: Password is required for authentication.")
     try:
         return idp_service.login(req.user_id, req.password)
     except Exception as e:

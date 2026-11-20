@@ -222,6 +222,12 @@ function switchRoleTab(roleKey, updateUrl = true) {
     errBox.textContent = "";
   }
 
+  // Clear notice banner on active tab switch
+  if (updateUrl) {
+    const noticeBanner = document.getElementById("noticeBanner");
+    if (noticeBanner) noticeBanner.style.display = "none";
+  }
+
   // Render permissions list
   if (permsEl) {
     permsEl.innerHTML = r.permissions.map(p => {
@@ -308,8 +314,10 @@ async function handleLoginSubmit(e) {
       persona: data.persona
     }));
 
-    // Redirect to the portal
-    window.location.href = r.portalUrl;
+    // Redirect to the matching portal for the authenticated persona's role
+    const matchingRole = Object.values(ROLES).find(x => x.roleName === data.persona.role);
+    const destination = matchingRole ? matchingRole.portalUrl : r.portalUrl;
+    window.location.href = destination;
   } catch (err) {
     if (errBox) {
       errBox.style.display = "block";

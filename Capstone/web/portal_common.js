@@ -198,18 +198,11 @@ async function handlePortalChatSubmit(e) {
   showTypingIndicator();
 
   try {
-    // Ensure active token exists
+    // Fail-closed session check
     if (!currentAuth.token) {
-      const p = currentAuth.persona || {};
-      const fallbackId = p.user_id || "DR_302";
-      const lRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: fallbackId })
-      });
-      const lData = await lRes.json();
-      currentAuth = { token: lData.token, persona: lData.persona };
-      sessionStorage.setItem("hospital_auth", JSON.stringify(currentAuth));
+      hideTypingIndicator();
+      window.location.href = "/login?msg=auth_required";
+      return;
     }
 
     const res = await fetch("/api/chat/query", {

@@ -4,12 +4,16 @@ Manages predefined personas, staff login, and emergency break-glass elevation.
 """
 
 import os
+import hmac
 import hashlib
 import sqlite3
 import json
+import logging
 from typing import List, Dict, Any, Optional
 from src.config import DB_PATH
 from src.module1_identity_policy.tokens import issue_token, AuthenticationError
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_PASSWORDS = {
     "CMO_501": "cmo@123",
@@ -30,12 +34,12 @@ def hash_password(password: str, salt: Optional[str] = None) -> str:
 
 
 def verify_password(password: str, hashed_str: str) -> bool:
-    """Verifies a plain password against the stored salt$hash string."""
+    """Verifies a plain password against the stored salt$hash string using constant-time comparison."""
     if not hashed_str or "$" not in hashed_str:
         return False
     salt, expected_hash = hashed_str.split("$", 1)
     actual_hash = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
-    return actual_hash == expected_hash
+    return hmac.compare_digest(actual_hash, expected_hash)
 
 
 class IdPService:
@@ -61,8 +65,8 @@ class IdPService:
                     cur.execute("UPDATE personas SET password_hash = ? WHERE user_id = ?", (h, uid))
             conn.commit()
             conn.close()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Could not verify password schema: {e}")
 
     def list_personas(self) -> List[Dict[str, Any]]:
         """Returns all predefined hospital personas for demo & testing."""
